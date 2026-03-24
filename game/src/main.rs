@@ -1,61 +1,72 @@
-use bevy::{
-  camera:: Viewport,
-  color::palettes::{
-    basic::WHITE,
-    css::{ GREEN, RED },
-  },
-  math::ops::powf,
-  prelude::*,
-};
+use bevy::{math::Vec2, prelude::*};
 
 mod board;
 
-const GAME_WINDOW_TITLE: &str = "Grand Strategy Chess Window";
-const GAME_TITLE: &str = "Grand Strategy Chess";
-const X_EXTENT: f32 = 1000.;
-const Y_EXTENT: f32 = 150.;
-const THICKNESS: f32 = 5.0;
+/*
 
+All code needs to be refactored to follow ECS design (entity/data, component, system)
+
+*/
+
+const TILE_SIZE: f32 = 80.0;
 
 fn main() {
-  App::new()
-    .add_plugins(DefaultPlugins)
-    .add_systems(Startup, setup)
-    .run();
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_systems(Startup, setup)
+        .run();
 }
 
 fn setup(
-  mut commands: Commands,
-  mut meshes: ResMut<Assets<Mesh>>,
-  mut materials: ResMut<Assets<ColorMaterial>>,
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-  // TODO: Move to "board.rs" along with other todos tagged "BOARD"
-  let board_size: u8 = 8;
+    // TODO: Move to "board.rs" along with other todos tagged "BOARD"
+    let board_size: u8 = 8;
 
-  commands.spawn(Camera2d);
+    commands.spawn(Camera2d);
 
-  let mut tiles: Vec<Handle<Mesh>> = Vec::new();
+    let mut tiles: Vec<Handle<Mesh>> = Vec::new();
 
-  for i in 0..((board_size * board_size) - 1) {
-    tiles.push(meshes.add(Rectangle::new(50., 50.)));
-  }
+    for _ in 0..(board_size * board_size) {
+        tiles.push(meshes.add(Rectangle::new(TILE_SIZE, TILE_SIZE)));
+    }
 
-  let num_tiles = board_size ^ 2;
+    let mut tile_locs = tiles_locus(board_size);
 
-  // TODO: BOARD
-  for (i, tile) in tiles.into_iter().enumerate() {
-    // TODO: Move into a shape object/array
-    let color = Color::hsl(360. * i as f32 / num_tiles as f32, 0.95, 0.7);
+    // TODO: BOARD
+    for (i, tile) in tiles.into_iter().enumerate() {
+        // TODO: Move into a shape object/array
 
-    commands.spawn((
-      Mesh2d(tile),
-      MeshMaterial2d(materials.add(color)),
-      Transform::from_xyz(
-        // Distribute shapes from -X_EXTENT/2 to +X_EXTENT/2.
-        -X_EXTENT / 2. + i as f32 / (num_tiles - 1) as f32 * X_EXTENT,
-        -Y_EXTENT / 2.,
-        0.0,
-      ),
-    ));
-  }
+        let loc = tile_locs.pop().unwrap();
+
+        let color = {
+            // if (loc.x + loc.y) % 2 == 0 {
+            if (i as u8 / board_size + i as u8 % board_size) % 2 == 0 {
+                Color::BLACK
+            } else {
+                Color::WHITE
+            }
+        };
+
+        commands.spawn((
+            Mesh2d(tile),
+            MeshMaterial2d(materials.add(color)),
+            Transform::from_xyz(loc.x, loc.y, 0.0),
+        ));
+    }
+}
+
+fn tiles_locus(board_size: u8) -> Vec<Vec2> {
+    let mut locs = Vec::new();
+    for i in -((board_size / 2) as i32)..((board_size / 2) as i32) {
+        for j in -((board_size / 2) as i32)..((board_size / 2) as i32) {
+            locs.push(Vec2::new(
+                TILE_SIZE * (i as f32 + 0.5),
+                TILE_SIZE * (j as f32 + 0.5),
+            ));
+        }
+    }
+    locs
 }
