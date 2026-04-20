@@ -1,21 +1,12 @@
-use bevy::{
-    color::Color,
-    ecs::component::Component,
-    math::{Vec2, primitives::Rectangle},
-    // hierarchy::Parent,
-    // mesh::Mesh,
-};
+use bevy::{color::Color, ecs::component::Component, prelude::*};
 
 #[derive(Component)]
-pub struct Tile {
-    pub location: Vec2,
-    pub material: Color,
-    pub mesh: Rectangle,
-    // pub parent: Parent,
+#[require(Transform, Visibility)]
+pub struct BoardData;
+
+// Can later to attach gameplay things to a tile, e.g. tile_data, occupying_piece, fog_of_war, etc.
+#[derive(Component)]
+#[require(Transform, Visibility)]
+pub struct TileData {
+    pub color: Color,
 }
-
-// Currently Board doesn't do anything. Ideally it holds tiles as its children so we can translate and despawn everything together.
-#[derive(Component)]
-// #[relationship_target(relationship_target = Children, linked_spawn)]
-// pub struct Children(Vec<Entity>);
-pub struct Board {}
