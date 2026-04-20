@@ -1,4 +1,5 @@
 use super::components::*;
+use crate::visuals::components::Visual;
 use bevy::prelude::*;
 
 // TODO Figure out nice pattern to split generation and spawning of things.
