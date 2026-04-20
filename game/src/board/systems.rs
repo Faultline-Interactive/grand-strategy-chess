@@ -8,22 +8,11 @@ use bevy::prelude::*;
 const BOARD_SIZE: u32 = 8;
 const TILE_SIZE: f32 = 80.0;
 
-// pub fn render_sync() {}
-
-// pub fn visual_link_validation<T: Component>(
-//     visual: Query<Entity, Added<VisualLink>>,
-//     source: Query<Entity, With<T>>,
-// ) {
-//     for visual_entity in visual {
-//         // visual_entity.
-//     }
-// }
-
-pub fn debug_board_parent_animation(boards_query: Query<&mut Transform, With<BoardData>>) {
+pub fn debug_board_parent_animation(boards_query: Query<&mut Transform, With<TileData>>) {
     for mut transform in boards_query {
         transform.translate_around(
             Vec3::new(0.0, 0.0, 0.0),
-            Quat::from_rotation_z(std::f32::consts::FRAC_PI_2),
+            Quat::from_rotation_z(std::f32::consts::FRAC_PI_2 / 8.0),
         );
     }
 }
@@ -95,7 +84,7 @@ fn generate_tiles_data(board_size: u32) -> Vec<(TileData, Transform)> {
                 TileData {
                     color: {
                         if (i / board_size + i % board_size) % 2 == 0 {
-                            Color::BLACK
+                            Color::srgb_u8(40, 40, 40)
                         } else {
                             Color::WHITE
                         }
