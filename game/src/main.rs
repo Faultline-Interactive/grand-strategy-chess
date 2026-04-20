@@ -1,57 +1,22 @@
+#[cfg(not(target_arch = "wasm32"))]
 use bevy::{
-  camera::Viewport,
-  color::palettes::{
-    basic::WHITE,
-    css::{GREEN, RED},
-  },
-  prelude::*,
+    input::common_conditions::input_just_pressed,
+    sprite_render::{Wireframe2dConfig, Wireframe2dPlugin},
 };
+use bevy::{input::common_conditions::input_toggle_active, prelude::*};
 
 fn main() {
-  App::new()
-    .add_systems(Startup, add_people)
-    .add_systems(Update, (
-      hello_world, 
-      (update_people, greet_people).chain()
-    ))
-    .run();
+    let mut app = App::new();
+    app.add_plugins((
+        DefaultPlugins,
+    ));
+    app.run();
 }
 
-#[derive(Component)]
-struct Name(String);
-
-#[derive(Component)]
-struct Person;
-
-fn hello_world() {
-  println!("Hello World!");
+fn setup(
+    mut commands: Commands,
+) {
 }
-
-fn add_people(mut commands: Commands) {
-  commands.spawn((Person, Name("Elaina Proctor".to_string())));
-  commands.spawn((Person, Name("Renzo Hume".to_string())));
-  commands.spawn((Person, Name("Zayna Nieves".to_string())));
-}
-
-fn update_people(mut query: Query<&mut Name, With<Person>>) {
-  for mut name in &mut query {
-    if name.0 == "Elaina Proctor" {
-      name.0 = "Elaina Hume".to_string();
-      break;
-    }
-  }
-}
-
-fn greet_people(query: Query<&Name, With<Person>>) {
-  for name in &query {
-    println!("Hello {}!", name.0);
-  }
-}
-
-
-
-
-
 
 
 
