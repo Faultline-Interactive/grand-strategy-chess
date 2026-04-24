@@ -1,9 +1,7 @@
 use super::components::*;
-use crate::visuals::components::Visual;
 use bevy::prelude::*;
 
 // TODO Figure out nice pattern to split generation and spawning of things.
-// TODO Create pattern for two-entity spawning that can be reused.
 // TODO Remove consts by making a settings entity that can be queried.
 
 const BOARD_SIZE: u32 = 8;
@@ -13,7 +11,7 @@ pub fn debug_board_parent_animation(boards_query: Query<&mut Transform, With<Til
     for mut transform in boards_query {
         transform.translate_around(
             Vec3::new(0.0, 0.0, 0.0),
-            Quat::from_rotation_z(std::f32::consts::FRAC_PI_2 / 8.0),
+            Quat::from_rotation_z(std::f32::consts::FRAC_PI_2 / 64.0),
         );
     }
 }
@@ -37,41 +35,6 @@ pub fn create_board(mut commands: Commands) {
 
     for child_id in tile_data_ids {
         commands.entity(board_data_id).add_child(child_id);
-    }
-}
-
-pub fn create_tile_visuals(
-    tile_query: Query<(Entity, &TileData)>,
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
-    debug!(target: "gsc", tile_data = tile_query.iter().count().to_string(), "Entered create_tile_visuals:");
-    // Generate visuals and links
-    let mut tile_bundles = Vec::new();
-    for (entity, tile_data) in tile_query {
-        tile_bundles.push((generate_tile_visual(tile_data), entity))
-    }
-
-    // Spawn
-    debug!(target: "gsc", tile_bundles = tile_bundles.len().to_string(), "Begin spawning TileVisual:");
-    for (visual, data_entity) in tile_bundles {
-        let visual_entity = commands
-            .spawn((
-                Mesh2d(meshes.add(visual.mesh)),
-                MeshMaterial2d(materials.add(visual.material)),
-                Transform::default(),
-            ))
-            .id();
-        commands.entity(data_entity).add_child(visual_entity);
-        debug_once!(target: "gsc", "Spawned TileVisual");
-    }
-}
-
-fn generate_tile_visual(tile_data: &TileData) -> Visual {
-    Visual {
-        material: ColorMaterial::from_color(tile_data.color),
-        mesh: Rectangle::new(TILE_SIZE, TILE_SIZE),
     }
 }
 

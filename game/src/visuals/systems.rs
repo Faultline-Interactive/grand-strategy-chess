@@ -1,10 +1,41 @@
-// pub fn render_sync() {}
+use super::components::{Visual, VisualOf};
+use crate::board::components::TileData;
+use bevy::prelude::*;
 
-// pub fn visual_link_validation<T: Component>(
-//     visual: Query<Entity, Added<VisualLink>>,
-//     source: Query<Entity, With<T>>,
-// ) {
-//     for visual_entity in visual {
-//         // visual_entity.
-//     }
-// }
+const TILE_SIZE: f32 = 80.0;
+
+pub fn create_tile_visuals(
+    tile_query: Query<(Entity, &TileData), Added<TileData>>,
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+    debug!(
+        target: "gsc",
+        tile_data = tile_query.iter().count().to_string(),
+        "Entered visuals::create_tile_visuals:"
+    );
+
+    for (tile_entity, tile_data) in tile_query {
+        let visual = Visual {
+            material: ColorMaterial::from_color(tile_data.color),
+            mesh: Rectangle::new(TILE_SIZE, TILE_SIZE),
+        };
+
+        let mesh = visual.mesh;
+        let material = visual.material.clone();
+
+        let visual_entity = commands
+            .spawn((
+                visual,
+                VisualOf(tile_entity),
+                Mesh2d(meshes.add(mesh)),
+                MeshMaterial2d(materials.add(material)),
+                Transform::default(),
+            ))
+            .id();
+
+        commands.entity(tile_entity).add_child(visual_entity);
+        debug_once!(target: "gsc", "Spawned TileVisual from VisualsPlugin");
+    }
+}

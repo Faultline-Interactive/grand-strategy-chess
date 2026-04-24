@@ -24,6 +24,7 @@ pub fn run() {
     }));
 
     app.add_plugins(crate::board::BoardPlugin);
+    app.add_plugins(crate::visuals::VisualsPlugin);
     app.add_systems(Startup, setup);
     app.run();
 }
