@@ -1,5 +1,5 @@
 use super::components::{Visual, VisualOf};
-use crate::board::components::TileData;
+use crate::board::components::{TileColor, TileData};
 use bevy::prelude::*;
 
 const TILE_SIZE: f32 = 80.0;
@@ -18,7 +18,12 @@ pub fn create_tile_visuals(
 
     for (tile_entity, tile_data) in tile_query {
         let visual = Visual {
-            material: ColorMaterial::from_color(tile_data.color),
+            material: ColorMaterial::from_color({
+                match tile_data.color {
+                    TileColor::Light => Color::WHITE,
+                    TileColor::Dark => Color::srgb_u8(80, 40, 40),
+                }
+            }),
             mesh: Rectangle::new(TILE_SIZE, TILE_SIZE),
         };
 

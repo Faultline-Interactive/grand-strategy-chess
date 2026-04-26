@@ -48,9 +48,9 @@ fn generate_tiles_data(board_size: u32) -> Vec<(TileData, Transform)> {
                 TileData {
                     color: {
                         if (i / board_size + i % board_size) % 2 == 0 {
-                            Color::srgb_u8(40, 40, 40)
+                            TileColor::Dark //Color::srgb_u8(40, 40, 40)
                         } else {
-                            Color::WHITE
+                            TileColor::Light //Color::WHITE
                         }
                     },
                 },

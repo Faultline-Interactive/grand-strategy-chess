@@ -1,4 +1,4 @@
-use bevy::{color::Color, ecs::component::Component, prelude::*};
+use bevy::prelude::*;
 
 #[derive(Component)]
 #[require(Transform, Visibility)]
@@ -8,5 +8,11 @@ pub struct BoardData;
 #[derive(Component)]
 #[require(Transform, Visibility)]
 pub struct TileData {
-    pub color: Color,
+    pub color: TileColor,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TileColor {
+    Light,
+    Dark,
 }
