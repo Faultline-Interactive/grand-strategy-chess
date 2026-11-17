@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug executable 'GaranStrartegyChuss'",
+            "type": "lldb",
+            "request": "launch",
+            "cargo": {
+                "args": [
+                    "run",
+                    "--bin=GaranStrartegyChuss"
+                ]
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "RUST_BACKTRACE": "1",
+                "PATH": "${workspaceFolder}\\target\\debug;${workspaceFolder}\\target\\debug\\deps;${env:PATH}"
+            },
+            "sourceLanguages": [
+                "rust"
+            ]
+        },
+    ]
+}

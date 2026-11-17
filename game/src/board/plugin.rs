@@ -4,6 +4,7 @@ pub struct BoardPlugin;
 
 impl Plugin for BoardPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, super::systems::create_board);
+        app.add_systems(Startup, super::systems::create_board)
+            .add_systems(FixedUpdate, super::systems::debug_board_parent_animation);
     }
 }
