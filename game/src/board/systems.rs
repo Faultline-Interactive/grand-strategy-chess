@@ -1,3 +1,5 @@
+use crate::visuals::components::HasVisual;
+
 use super::components::*;
 use bevy::prelude::*;
 
@@ -23,18 +25,17 @@ pub fn create_board(mut commands: Commands) {
     debug_once!(target: "gsc", tile_data = tiles_data.iter().count().to_string(), "Created tiles:");
 
     // Spawn
-    let board_data_id = commands
-        .spawn((BoardData, Transform::default(), Visibility::Visible))
-        .id();
+    let board_data_id = commands.spawn((BoardData, Transform::default())).id();
     debug_once!(target: "gsc", tile_data = tiles_data.iter().count().to_string(), "Created tiles:");
 
     let mut tile_data_ids = Vec::new();
     for t in tiles_data {
-        tile_data_ids.push(commands.spawn(t).id());
+        tile_data_ids.push(commands.spawn((t, HasVisual)).id());
     }
 
     for child_id in tile_data_ids {
         commands.entity(board_data_id).add_child(child_id);
+        // child_id.
     }
 }
 
@@ -48,9 +49,9 @@ fn generate_tiles_data(board_size: u32) -> Vec<(TileData, Transform)> {
                 TileData {
                     color: {
                         if (i / board_size + i % board_size) % 2 == 0 {
-                            TileColor::Dark //Color::srgb_u8(40, 40, 40)
+                            TileColor::Dark
                         } else {
-                            TileColor::Light //Color::WHITE
+                            TileColor::Light
                         }
                     },
                 },

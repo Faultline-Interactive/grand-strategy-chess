@@ -1,8 +1,16 @@
-use super::components::{Visual, VisualOf};
-use crate::board::components::{TileColor, TileData};
-use bevy::prelude::*;
+use super::components::*;
+use crate::board::components::*;
+use bevy::{ecs::event::Trigger, prelude::*};
 
 const TILE_SIZE: f32 = 80.0;
+
+pub fn visual_spawn_event_listener(
+    event: On<SpawnVisualRequest>,
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
+}
 
 pub fn create_tile_visuals(
     tile_query: Query<(Entity, &TileData), Added<TileData>>,
@@ -17,24 +25,17 @@ pub fn create_tile_visuals(
     );
 
     for (tile_entity, tile_data) in tile_query {
-        let visual = Visual {
-            material: ColorMaterial::from_color({
-                match tile_data.color {
-                    TileColor::Light => Color::WHITE,
-                    TileColor::Dark => Color::srgb_u8(80, 40, 40),
-                }
-            }),
-            mesh: Rectangle::new(TILE_SIZE, TILE_SIZE),
-        };
-
-        let mesh = visual.mesh;
-        let material = visual.material.clone();
+        let material = ColorMaterial::from_color({
+            match tile_data.color {
+                TileColor::Light => Color::WHITE,
+                TileColor::Dark => Color::srgb_u8(80, 40, 40),
+            }
+        });
 
         let visual_entity = commands
             .spawn((
-                visual,
                 VisualOf(tile_entity),
-                Mesh2d(meshes.add(mesh)),
+                Mesh2d(meshes.add(Rectangle::new(TILE_SIZE, TILE_SIZE))),
                 MeshMaterial2d(materials.add(material)),
                 Transform::default(),
             ))
