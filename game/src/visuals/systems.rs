@@ -1,18 +1,10 @@
 use super::components::*;
 use crate::board::components::*;
-use bevy::{ecs::event::Trigger, prelude::*};
+use bevy::{prelude::*};
 
 const TILE_SIZE: f32 = 80.0;
 
-pub fn visual_spawn_event_listener(
-    event: On<SpawnVisualRequest>,
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
-}
-
-pub fn create_tile_visuals(
+pub fn spawn_tile_visuals(
     tile_query: Query<(Entity, &TileData), Added<TileData>>,
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -21,7 +13,7 @@ pub fn create_tile_visuals(
     debug!(
         target: "gsc",
         tile_data = tile_query.iter().count().to_string(),
-        "Entered visuals::create_tile_visuals:"
+        "Entered visuals::spawn_tile_visuals:"
     );
 
     for (tile_entity, tile_data) in tile_query {
@@ -34,7 +26,6 @@ pub fn create_tile_visuals(
 
         let visual_entity = commands
             .spawn((
-                VisualOf(tile_entity),
                 Mesh2d(meshes.add(Rectangle::new(TILE_SIZE, TILE_SIZE))),
                 MeshMaterial2d(materials.add(material)),
                 Transform::default(),

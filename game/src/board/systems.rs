@@ -1,5 +1,3 @@
-use crate::visuals::components::HasVisual;
-
 use super::components::*;
 use bevy::prelude::*;
 
@@ -30,7 +28,7 @@ pub fn create_board(mut commands: Commands) {
 
     let mut tile_data_ids = Vec::new();
     for t in tiles_data {
-        tile_data_ids.push(commands.spawn((t, HasVisual)).id());
+        tile_data_ids.push(commands.spawn(t).id());
     }
 
     for child_id in tile_data_ids {
