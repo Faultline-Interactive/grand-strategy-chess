@@ -1,6 +1,7 @@
 use super::components::*;
 use crate::board::components::*;
-use bevy::{prelude::*};
+use bevy::picking::*;
+use bevy::prelude::*;
 
 const TILE_SIZE: f32 = 80.0;
 

@@ -1,5 +1,7 @@
 use super::components::*;
+use bevy::picking::*;
 use bevy::prelude::*;
+//use bevy::ecs::Message;
 
 // TODO Figure out nice pattern to split generation and spawning of things.
 // TODO Remove consts by making a settings entity that can be queried.
@@ -20,15 +22,32 @@ pub fn create_board(mut commands: Commands) {
     debug!(target: "gsc", "Entered create_board");
     // Generate
     let tiles_data = generate_tiles_data(BOARD_SIZE);
-    debug_once!(target: "gsc", tile_data = tiles_data.iter().count().to_string(), "Created tiles:");
+    debug_once!(target: "gsc", tile_data = tiles_data.len().to_string(), "Created tiles:");
 
     // Spawn
     let board_data_id = commands.spawn((BoardData, Transform::default())).id();
-    debug_once!(target: "gsc", tile_data = tiles_data.iter().count().to_string(), "Created tiles:");
+    debug_once!(target: "gsc", tile_data = tiles_data.len().to_string(), "Created tiles:");
 
     let mut tile_data_ids = Vec::new();
     for t in tiles_data {
-        tile_data_ids.push(commands.spawn(t).id());
+        tile_data_ids.push(
+            commands
+                .spawn(t)
+                .observe(
+                    |drag: On<PointerDrag>, mut transforms: Query<&mut Transform>| {
+                        let mut transform = transforms.get_mut(drag.entity).unwrap();
+                        transform.rotate_local_y(drag.delta.x / 50.0);
+                    },
+                )
+                .observe(|click: On<PointerClick>, mut commands: Commands| {
+                    println!("Tile {} goes BOOM!", click.entity);
+                    commands.entity(click.entity).despawn();
+                })
+                .observe(|over: On<PointerOver>| {
+                    println!("Hello? Any tiles home??");
+                })
+                .id(),
+        );
     }
 
     for child_id in tile_data_ids {
@@ -46,7 +65,7 @@ fn generate_tiles_data(board_size: u32) -> Vec<(TileData, Transform)> {
             let tile_data = (
                 TileData {
                     color: {
-                        if (i / board_size + i % board_size) % 2 == 0 {
+                        if (i / board_size + i % board_size).is_multiple_of(2) {
                             TileColor::Dark
                         } else {
                             TileColor::Light

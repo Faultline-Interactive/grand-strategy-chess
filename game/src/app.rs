@@ -23,6 +23,7 @@ pub fn run() {
         ..default()
     }));
 
+    app.add_plugins(MeshPickingPlugin);
     app.add_plugins(crate::board::BoardPlugin);
     app.add_plugins(crate::visuals::VisualsPlugin);
     app.add_systems(Startup, setup);
